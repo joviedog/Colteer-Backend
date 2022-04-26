@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'authentication',
     'database',
-    'profiles',
     'rest_framework',
     'knox',
 ]

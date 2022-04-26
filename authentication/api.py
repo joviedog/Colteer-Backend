@@ -1,8 +1,7 @@
 from rest_framework import generics, permissions
 from rest_framework.response import Response 
 from knox.models import AuthToken
-from .serializers import VolunteerSerializer, OrganizationSerializer, RegisterVolunteerSerializer, RegisterOrganizationSerializer, LoginOrganizationSerializer, LoginVolunteerSerializer
-
+from .serializers import VolunteerSerializer, OrganizationSerializer, RegisterVolunteerSerializer, RegisterOrganizationSerializer, LoginSerializer, CustomUserSerializer
 
 # Register Volunteer API
 class RegisterVolunteerAPI(generics.GenericAPIView):
@@ -35,33 +34,18 @@ class RegisterOrganizationAPI(generics.GenericAPIView):
 
 
 # Login Volunteer API
-class LoginVolunteerAPI(generics.GenericAPIView):
-    serializer_class = LoginVolunteerSerializer
+class LoginAPI(generics.GenericAPIView):
+    serializer_class = LoginSerializer
 
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        volunteer = serializer.validated_data
+        user = serializer.validated_data
         return Response({
-            "user": VolunteerSerializer(volunteer, context=self.get_serializer_context()).data,
-            "token": AuthToken.objects.create(volunteer)[1]
+            "user": CustomUserSerializer(user, context=self.get_serializer_context()).data,
+            "token": AuthToken.objects.create(user)[1]
         })
-
-
-# Login Organization API
-class LoginOrganizationAPI(generics.GenericAPIView):
-    serializer_class = LoginOrganizationSerializer
-
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        organization = serializer.validated_data
-        return Response({
-            "user": OrganizationSerializer(organization, context=self.get_serializer_context()).data,
-            "token": AuthToken.objects.create(organization)[1]
-        })
-
 
 
 # Get Volunteer API

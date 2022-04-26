@@ -7,31 +7,23 @@ from django.utils import timezone
 
 # Create your models here.
 class CustomUser(AbstractUser):
+    class Meta:
+        verbose_name = 'User'
     username = models.CharField(max_length=40, unique=True, default='')
+    document = models.CharField(max_length=20, unique=True)
     name = models.CharField(max_length=150)
-    pass
-
-
-class Volunteer(CustomUser):
-    class Meta:
-        verbose_name = 'Volunteer'
-    birthday = models.DateField(default=timezone.now)
-    phone=models.CharField(max_length=10, default='12345678')
-    def __str__(self):
-        return str(self.name)
-
-
-class Organization(CustomUser):  
-    class Meta:
-        verbose_name = 'Organization'
-    nit = models.CharField(max_length=20, unique=True)
-    type = models.CharField(max_length=100)
-    phone=models.CharField(max_length=10, default='12345678')
+    phone = models.CharField(max_length=10, default='12345678')
     created_at = models.DateField(auto_now_add=True)
+    # Type Identification for all users
+    user_type = models.CharField(max_length=100)
+    # Fields for volunteer
+    birthday = models.DateField(default=timezone.now, null=True)
+    # Fields for organizations
+    org_type = models.CharField(max_length=50, null=True)
 
     def __str__(self):
         return str(self.name)
-
+    
 class Category(models.Model):
     name = models.CharField(max_length=100)
 
@@ -46,8 +38,8 @@ class Session(models.Model):
     description = models.CharField(max_length=200)
     # Foreign Keys and Relationships
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
-    organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
-    volunteer = models.ManyToManyField(Volunteer)
+    organization = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="Organizador")
+    volunteer = models.ManyToManyField(CustomUser, related_name="Voluntario")
 
 
 
@@ -62,6 +54,6 @@ class Turn(models.Model):
 class Donation(models.Model):
     value = models.FloatField()
     # Foreign Keys and Relationships
-    user = models.ForeignKey(Volunteer, on_delete=models.SET_NULL, null=True)
-    organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name="Donador")
+    organization = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="Organizacion")
  

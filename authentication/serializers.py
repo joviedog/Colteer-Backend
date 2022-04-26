@@ -1,92 +1,85 @@
 from rest_framework import serializers
-from database.models import Volunteer, Organization, CustomUser
+from database.models import CustomUser
 from django.contrib.auth import authenticate 
 from django.contrib.auth.hashers import make_password, check_password
 
+
+
 # CustomUserSerializer
-# Volunteer Serializer
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
-        model=CustomUser
-        exclude = ['username', 'email', 'name']
+        model = CustomUser
+        fields = ['username', 'name', 'document', 'phone']
+
+
 
 # Volunteer Serializer
 class VolunteerSerializer(serializers.ModelSerializer):
     class Meta:
-        model=Volunteer
-        exclude = ['last_login','is_superuser', 'first_name', 'last_name','is_staff','is_active', 'id','groups','user_permissions','password']
+        model=CustomUser
+        fields = ['username', 'email', 'name', 'document', 'phone', 'birthday']
 
 # Organization Serializer
 class OrganizationSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model=Organization
-        exclude = ['nit', 'type','last_login','is_superuser', 'first_name', 'last_name','is_staff','is_active', 'id','groups','user_permissions','password']
+        model=CustomUser
+        fields = ['username', 'email','name', 'document', 'phone', 'org_type']
 
 
 
 # Register Volunteer Serializer
 class RegisterVolunteerSerializer(serializers.ModelSerializer):
     class Meta:
-        model=Volunteer 
-        fields =  ['birthday', 'phone','password', 'username']
+        model=CustomUser
+        fields=['username', 'email', 'name', 'document', 'phone', 'birthday', 'password']
         extra_kwargs = {'password':{'write_only':True}}
 
     def create(self, validated_data):
-        volunteer = Volunteer.objects.create(
+        volunteer = CustomUser.objects.create_user(
             username=validated_data['username'],
+            document=validated_data['document'],
             name=validated_data['name'],
+            phone=validated_data['phone'],
             email=validated_data['email'],
             birthday=validated_data['birthday'],
-            phone=validated_data['phone'],
-            password=make_password(validated_data['password'])
+            user_type="Volunteer",
+            password=validated_data['password']
         )
         return volunteer
 
 # Register Organization Serializer
 class RegisterOrganizationSerializer(serializers.ModelSerializer):
     class Meta:
-        model=Organization
-        fields = ['name', 'email', 'nit', 'type', 'phone', 'password', 'username']
+        model = CustomUser
+        fields = ['username', 'email', 'name',
+                  'document', 'phone', 'org_type', 'password']
         extra_kwargs = {'password':{'write_only':True}}
 
     def create(self, validated_data):
-        organization = Organization.objects.create(
+        organization = CustomUser.objects.create_user(
             username=validated_data['username'],
+            document=validated_data['document'],
             name=validated_data['name'],
-            email=validated_data['email'],
-            nit=validated_data['nit'],
-            type=validated_data['type'],
             phone=validated_data['phone'],
-            password=make_password(validated_data['password'])
+            email=validated_data['email'],
+            user_type="Organization",
+            org_type=validated_data['org_type'],
+            password=validated_data['password']
         )
         return organization
 
-# Login Volunteer Serializer
-class LoginVolunteerSerializer(serializers.Serializer):
+
+# Login Serializer for all classes
+class LoginSerializer(serializers.Serializer):
     email = serializers.CharField()
     password = serializers.CharField()
 
     def validate(self, data):
-        user = Volunteer.objects.get(email=data['email'])
+        user = CustomUser.objects.get(email=data['email'])
         check_pw = check_password(data['password'], user.password)
         if check_pw and user.is_active:
             return user 
 
         raise serializers.ValidationError("Credenciales incorrectas, verifique")
 
-# Login Volunteer Serializer
-class LoginOrganizationSerializer(serializers.Serializer):
-    email = serializers.CharField()
-    password = serializers.CharField()
-
-    def validate(self, data):
-        user = Organization.objects.get(email=data['email'])
-        check_pw = check_password(data['password'], user.password)
-        if check_pw and user.is_active:
-            print(user)
-            return user 
-
-        raise serializers.ValidationError("Credenciales incorrectas, verifique")
-
- 
