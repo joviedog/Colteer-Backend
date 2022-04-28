@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'authentication',
     'database',
+    'session',
     'rest_framework',
     'knox',
     'corsheaders'
