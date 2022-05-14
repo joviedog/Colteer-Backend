@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'authentication',
     'database',
     'session',
+    'search',
     'rest_framework',
     'knox',
     'corsheaders'
