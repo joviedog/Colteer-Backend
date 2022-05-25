@@ -22,5 +22,4 @@ urlpatterns = [
     path('', include('session.urls')),
     path('', include('search.urls')),
     path('', include('donations.urls')),
-    path('', include('volunteer.urls')),
 ]
