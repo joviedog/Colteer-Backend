@@ -7,4 +7,5 @@ urlpatterns = [
     path('api/sessions/session/<int:id>', get_session_by_id, name = "api_get_detail_session"),
     path('api/sessions/session/<int:id>/update', update_session, name = "api_update_session"),
     path('api/sessions/session/<int:id>/delete', delete_session, name = "api_delete_session"),
+    path('api/sessions/session/<int:id>/register-volunteer', insert_volunteer_in_session, name = "api_register_volunteer"),
 ]

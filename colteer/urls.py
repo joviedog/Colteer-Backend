@@ -21,5 +21,6 @@ urlpatterns = [
     path('', include('authentication.urls')),
     path('', include('session.urls')),
     path('', include('search.urls')),
-    path('', include('donations.urls'))
+    path('', include('donations.urls')),
+    path('', include('volunteer.urls')),
 ]
