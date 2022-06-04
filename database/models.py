@@ -36,6 +36,7 @@ class Session(models.Model):
     start_time = models.TimeField()
     end_time = models.TimeField()
     description = models.CharField(max_length=200)
+    location = models.CharField(max_length=100)
     # Foreign Keys and Relationships
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
     organization = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="Organizador")

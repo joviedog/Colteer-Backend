@@ -9,7 +9,7 @@ from django.contrib.auth.hashers import make_password, check_password
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['username', 'name', 'document', 'phone']
+        fields = ['username', 'name', 'document', 'phone', 'user_type']
 
 
 
