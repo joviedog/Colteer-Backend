@@ -37,6 +37,13 @@ class Session(models.Model):
     end_time = models.TimeField()
     description = models.CharField(max_length=200)
     location = models.CharField(max_length=100)
+
+    SESSION_STATUS = [
+        (0, "En espera"),
+        (1, "Aprobado"),
+        (2, "Rechazado"),
+    ]
+    status = models.CharField(max_length = 1, choices = SESSION_STATUS, default = 0)
     # Foreign Keys and Relationships
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
     organization = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="Organizador")
