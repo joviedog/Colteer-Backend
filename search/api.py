@@ -1,5 +1,5 @@
 from unicodedata import category
-from rest_framework import status 
+from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -13,11 +13,23 @@ def sessionCategory(request):
         cat_id = Category.objects.filter(name=request.data['category'])[0].id
         if cat_id:
             sessionsByCategory = Session.objects.filter(id=cat_id)
-            sessionsSerializer = SessionSerializer(sessionsByCategory, many=True)
+            sessionsSerializer = SessionSerializer(
+                sessionsByCategory, many=True)
             return Response(sessionsSerializer.data, status=status.HTTP_200_OK)
         else:
             return Response({"message": "Categoria de busqueda invalida"}, status=status.HTTP_404_NOT_FOUND)
     return Response({"message": "Primero debe iniciar sesion"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def sessionName(request):
+    if request.user.is_authenticated:
+        sessionsByName = Session.objects.filter(
+            name__contains=request.data['name'])
+        sessionsSerializer = SessionSerializer(sessionsByName, many=True)
+        return Response(sessionsSerializer.data, status=status.HTTP_200_OK)
+    return Response({"message": "Primero debe iniciar sesion"}, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['GET'])
 def sessionDate(request):
@@ -29,16 +41,15 @@ def sessionDate(request):
     return Response({"message": "Primero debe iniciar sesion"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-
 @api_view(['GET'])
 def organizationType(request):
     if request.user.is_authenticated:
         organizationsByType = CustomUser.objects.filter(user_type="Organization",
-            org_type=request.data['org_type'])
-        organizationsSerializer = OrganizationSerializer(organizationsByType, many=True)
+                                                        org_type=request.data['org_type'])
+        organizationsSerializer = OrganizationSerializer(
+            organizationsByType, many=True)
         return Response(organizationsSerializer.data, status=status.HTTP_200_OK)
     return Response({"message": "Primero debe iniciar sesion"}, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 @api_view(['GET'])

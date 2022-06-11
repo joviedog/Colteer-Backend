@@ -2,12 +2,11 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from database.models import Session, CustomUser
-from session.serializers import SessionSerializer
+from database.models import Session, CustomUser, VolunteerRequest, Turn
+from session.serializers import SessionSerializer, VolunteerRequestSerializer, TurnSerializer
 
 @api_view(['GET'])
 def get_sessions(request):
-
     if request.user.is_authenticated:
         sessions = Session.objects.all()
         sessions_serializer = SessionSerializer(sessions, many = True)
@@ -34,6 +33,29 @@ def insert_session(request):
             return Response(sessions_serializer.data, status = status.HTTP_200_OK)
         return Response(sessions_serializer.errors, status = status.HTTP_400_BAD_REQUEST)
     return Response({"message": "Primero debe iniciar sesion"}, status = status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def getVolunteerRequests(request):
+    if request.user.is_authenticated:
+        requestV = VolunteerRequest.objects.filter(organization=request.user)
+        request_serializer = VolunteerRequestSerializer(requestV, many=True)
+        return Response(request_serializer.data, status=status.HTTP_200_OK)
+    return Response({"message": "Primero debe iniciar sesion"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def create_turn(request, id):
+
+    if request.user.is_authenticated:
+        volunteer = CustomUser.objects.filter(id=request.user.id).first()
+        session = Session.objects.filter(id=id).first()
+        turn = Turn(available=request.data['available'], full=request.data['full'], start_time=request.data['start_time'], end_time=request.data['end_time'], session=session)
+        turn.save()
+        turn_serializer = TurnSerializer(session)
+        return Response(turn_serializer.data, status=status.HTTP_200_OK)
+    return Response({"message": "Primero debe iniciar sesion"}, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['POST'])
 def insert_volunteer_in_session(request, id):

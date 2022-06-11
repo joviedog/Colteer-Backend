@@ -9,4 +9,6 @@ urlpatterns = [
          organizationType, name="api_organization_by_category"),
     path('api/search/organization/all',
          allOrganizations, name="api_all_organizations"),
+    path('api/search/sessions/by_name',
+         sessionName, name="api_session_by_name"),
 ]
