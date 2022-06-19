@@ -9,6 +9,7 @@ class UserSerializer(serializers.ModelSerializer):
 class SessionSerializer(serializers.ModelSerializer):
 
     volunteer = UserSerializer(many = True, read_only = True)
+    organization = UserSerializer(many = False, read_only = True)
 
     class Meta:
         model = Session
@@ -17,7 +18,9 @@ class SessionSerializer(serializers.ModelSerializer):
 
 class VolunteerRequestSerializer(serializers.ModelSerializer):
 
-    volunteer = UserSerializer(many=True, read_only=True)
+    volunteer = UserSerializer(many=False, read_only=True)
+    session = SessionSerializer(many = False, read_only = True)
+    organization = UserSerializer(many = False, read_only = True)
 
     class Meta:
         model = VolunteerRequest

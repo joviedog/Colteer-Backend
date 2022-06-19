@@ -37,13 +37,6 @@ class Session(models.Model):
     end_time = models.TimeField()
     description = models.CharField(max_length=200)
     location = models.CharField(max_length=100)
-   
-    SESSION_STATUS = [
-        (0, "En espera"),
-        (1, "Aprobado"),
-        (2, "Rechazado"),
-    ]
-    status = models.IntegerField(choices = SESSION_STATUS, default = 0)
     
     # Foreign Keys and Relationships
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
@@ -59,10 +52,10 @@ class VolunteerRequest(models.Model):
     status = models.IntegerField(choices=SESSION_STATUS, default=0)
     # Foreign keys and Relationships
     session = models.ForeignKey(
-        Session, on_delete=models.CASCADE, related_name="SesionSolicitada")
+        Session, on_delete=models.CASCADE, related_name="SesionSolicitada", null = True)
     organization = models.ForeignKey(
-        CustomUser, on_delete=models.CASCADE, related_name="OrganizacionOferente", default=None)
-    volunteer = models.ManyToManyField(CustomUser, related_name="Solicitante")
+        CustomUser, on_delete=models.CASCADE, related_name="OrganizacionOferente", null = True)
+    volunteer = models.ForeignKey(CustomUser, on_delete = models.CASCADE, related_name="Solicitante", null = True)
 
 
 class Turn(models.Model):
