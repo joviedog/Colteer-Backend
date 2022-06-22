@@ -48,14 +48,9 @@ def getVolunteerRequests(request):
 
 
 @api_view(['POST'])
-def create_turn(request, id):
-
+def create_turn(request):
     if request.user.is_authenticated:
-        volunteer = CustomUser.objects.filter(id=request.user.id).first()
-        session = Session.objects.filter(id=id).first()
-        turn = Turn(available=request.data['available'], full=request.data['full'], start_time=request.data['start_time'], end_time=request.data['end_time'], session=session)
-        turn.save()
-        turn_serializer = TurnSerializer(session)
+        turn_serializer = TurnSerializer(data=request.data)
         return Response(turn_serializer.data, status=status.HTTP_200_OK)
     return Response({"message": "Primero debe iniciar sesion"}, status=status.HTTP_400_BAD_REQUEST)
 
