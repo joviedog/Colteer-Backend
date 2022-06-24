@@ -31,6 +31,8 @@ def insert_session(request):
         request.data["organization"] = request.user.id
         sessions_serializer = SessionSerializer(data = request.data)
         if sessions_serializer.is_valid():
+
+            print(sessions_serializer.validated_data)
             sessions_serializer.save()
             return Response(sessions_serializer.data, status = status.HTTP_200_OK)
         return Response(sessions_serializer.errors, status = status.HTTP_400_BAD_REQUEST)
@@ -48,9 +50,12 @@ def getVolunteerRequests(request):
 
 
 @api_view(['POST'])
-def create_turn(request):
+def create_turn(request, id):
     if request.user.is_authenticated:
+        request.data["session"] = id
         turn_serializer = TurnSerializer(data=request.data)
+        if turn_serializer.is_valid():
+            turn_serializer.save()
         return Response(turn_serializer.data, status=status.HTTP_200_OK)
     return Response({"message": "Primero debe iniciar sesion"}, status=status.HTTP_400_BAD_REQUEST)
 
